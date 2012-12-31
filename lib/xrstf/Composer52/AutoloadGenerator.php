@@ -1,13 +1,19 @@
 <?php
-
 /*
- * This file is part of Composer.
+ * Copyright (c) 2012, Christoph Mewes, http://www.xrstf.de
  *
- * (c) Nils Adermann <naderman@naderman.de>
- *     Jordi Boggiano <j.boggiano@seld.be>
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * --------------------------------------------------------------------------
+ *
+ * 99% of this is copied as-is from the original Composer source code and is
+ * released under MIT license as well. Copyright goes to:
+ *
+ * - Igor Wiedler <igor@wiedler.ch>
+ * - Jordi Boggiano <j.boggiano@seld.be>
  */
 
 namespace xrstf\Composer52;
