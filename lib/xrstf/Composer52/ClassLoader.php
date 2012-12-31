@@ -1,24 +1,21 @@
 <?php
 /*
- * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ * Copyright (c) 2012, Christoph Mewes, http://www.xrstf.de
  *
  * This file is released under the terms of the MIT license. You can find the
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
+ *
+ * --------------------------------------------------------------------------
+ *
+ * 99% of this is copied as-is from the original Composer source code and is
+ * released under MIT license as well. Copyright goes to:
+ *
+ * - Fabien Potencier <fabien@symfony.com>
+ * - Jordi Boggiano <j.boggiano@seld.be>
  */
 
-/**
- * PSR-0 compatible class loader
- *
- * This is basically a PHP 5.2 compatible version of Composer's own ClassLoader
- * implementation. So copyright goes in most places to the Composer team.
- *
- * @ingroup core
- * @author  Fabien Potencier <fabien@symfony.com>
- * @author  Jordi Boggiano <j.boggiano@seld.be>
- * @author  Christoph
- */
 class xrstf_Composer52_ClassLoader {
 	private $prefixes       = array();
 	private $fallbackDirs   = array();
