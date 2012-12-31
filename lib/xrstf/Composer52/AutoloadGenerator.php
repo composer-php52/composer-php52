@@ -180,8 +180,7 @@ EOF;
 		copy(__DIR__.'/ClassLoader.php', $targetDir.'/ClassLoader52.php');
 	}
 
-	protected function getIncludePathsFile(array $packageMap, Filesystem $filesystem, $relVendorPath, $vendorPath, $vendorPathCode, $appBaseDirCode)
-	{
+	protected function getIncludePathsFile(array $packageMap, Filesystem $filesystem, $relVendorPath, $vendorPath, $vendorPathCode, $appBaseDirCode) {
 		$includePaths = array();
 
 		foreach ($packageMap as $item) {
@@ -220,8 +219,7 @@ EOF;
 		return $includePathsFile . ");\n";
 	}
 
-	 	protected function getAutoloadFile($vendorPathToTargetDirCode, $suffix)
-	{
+	protected function getAutoloadFile($vendorPathToTargetDirCode, $suffix) {
 		return <<<AUTOLOAD
 <?php
 
@@ -234,8 +232,7 @@ return ComposerAutoloaderInit$suffix::getLoader();
 AUTOLOAD;
 	}
 
-	protected function getAutoloadRealFile($usePSR0, $useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix)
-	{
+	protected function getAutoloadRealFile($usePSR0, $useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix) {
 		// TODO the class ComposerAutoloaderInit should be revert to a closure
 		// when APC has been fixed:
 		// - https://github.com/composer/composer/issues/959
@@ -281,8 +278,8 @@ class ComposerAutoloaderInit$suffix {
 HEADER;
 
 		if ($useIncludePath) {
-				$file .= <<<INCLUDE_PATH
-		$includePaths = require \$dir.'/include_paths.php';
+			$file .= <<<'INCLUDE_PATH'
+		$includePaths = require $dir.'/include_paths.php';
 		array_push($includePaths, get_include_path());
 		set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
@@ -291,10 +288,10 @@ INCLUDE_PATH;
 		}
 
 		if ($usePSR0) {
-				$file .= <<<PSR0
-		$map = require \$dir.'/autoload_namespaces.php';
+			$file .= <<<'PSR0'
+		$map = require $dir.'/autoload_namespaces.php';
 		foreach ($map as $namespace => $path) {
-				$loader->add($namespace, $path);
+			$loader->add($namespace, $path);
 		}
 
 
@@ -302,10 +299,10 @@ PSR0;
 		}
 
 		if ($useClassMap) {
-				$file .= <<<CLASSMAP
-		$classMap = require \$dir.'/autoload_classmap.php';
+			$file .= <<<'CLASSMAP'
+		$classMap = require $dir.'/autoload_classmap.php';
 		if ($classMap) {
-				$loader->addClassMap($classMap);
+			$loader->addClassMap($classMap);
 		}
 
 
@@ -313,7 +310,7 @@ CLASSMAP;
 		}
 
 		if ($targetDirLoader) {
-				$file .= <<<REGISTER_AUTOLOAD
+			$file .= <<<REGISTER_AUTOLOAD
 		spl_autoload_register(array('ComposerAutoloaderInit$suffix', 'autoload'));
 
 
