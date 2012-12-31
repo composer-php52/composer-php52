@@ -18,9 +18,10 @@
 
 namespace xrstf\Composer52;
 
+use Composer\Autoload\AutoloadGenerator as BaseGenerator;
+use Composer\Autoload\ClassMapGenerator;
 use Composer\Config;
 use Composer\Installer\InstallationManager;
-use Composer\Autoload\AutoloadGenerator as BaseGenerator;
 use Composer\Package\AliasPackage;
 use Composer\Package\PackageInterface;
 use Composer\Repository\RepositoryInterface;
