@@ -266,7 +266,7 @@ class ComposerAutoloaderInit$suffix {
 	}
 
 	/**
-	 * @return \\xrstf\\Composer52\\ClassLoader
+	 * @return xrstf_Composer52_ClassLoader
 	 */
 	public static function getLoader() {
 		if (null !== self::\$loader) {
