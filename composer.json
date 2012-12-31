@@ -1,0 +1,18 @@
+{
+    "name": "xrstf/composer-php52",
+    "homepage": "http://www.sallycms.de/",
+    "license": "MIT",
+    "autoload": {
+        "psr-0": {
+            "xrstf\\Composer52": "lib/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "xrstf\\Composer52\\Generator::onPostInstallCmd"
+        ],
+        "post-update-cmd": [
+            "xrstf\\Composer52\\Generator::onPostInstallCmd"
+        ]
+    }
+}
