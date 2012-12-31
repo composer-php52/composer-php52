@@ -10,7 +10,7 @@ Usage
 
 In your project's `composer.json`, add the following lines:
 
-    ``` json
+    :::json
     {
         "require": {
             "xrstf/composer-php52": "1.*@dev"
@@ -24,6 +24,5 @@ In your project's `composer.json`, add the following lines:
             ]
         }
     }
-    ```
 
 After the next update/install, you will have a `vendor/autoload_52.php` file, that you can simply include and use in PHP 5.2 projects.
