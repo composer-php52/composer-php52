@@ -21,7 +21,23 @@ class Generator {
 		$package             = $composer->getPackage();
 		$config              = $composer->getConfig();
 
+		// We can't gain access to the Command's input object, so we have to look
+		// for -o / --optimize-autoloader ourselves. Sadly, neither getopt() works
+		// (always returns an empty array), nor does Symfony's Console Input, as
+		// it expects a full definition of the current command line and we can't
+		// provide that.
+
+//		$def   = new InputDefinition(array(new InputOption('optimize', 'o', InputOption::VALUE_NONE)));
+//		$input = new ArgvInput(null, $def);
+//		var_dump($input->hasOption('o')); // "Too many arguments"
+
+//		$options  = getopt('o', array('optimize-autoloader')); // always array()
+//		$optimize = !empty($options);
+
+		$args     = $_SERVER['argv'];
+		$optimize = in_array('-o', $args) || in_array('-o', $args);
+
 		$generator = new AutoloadGenerator();
-		$generator->dump($config, $localRepos, $package, $installationManager, 'composer', false);
+		$generator->dump($config, $localRepos, $package, $installationManager, 'composer', $optimize);
 	}
 }
