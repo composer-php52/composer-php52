@@ -3,7 +3,7 @@ PHP 5.2 Autoloading for Composer
 
 This package provides a an easy way to get a PHP 5.2 compatible autoloader out of Composer. The generated autoloader is fully compatible to the original and is written into separate files, each ending with `_52.php`.
 
-*Note:* Currently, dumping an optimized loader is not supported, as is updating the autoloader on `composer dump-autoload`, as there is no event yet that one could hook a script into.
+*Note:* Currently, updating the autoloader on `composer dump-autoload` is not possible, as there is no script event yet that one could hook a script into.
 
 Usage
 -----
