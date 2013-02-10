@@ -17,10 +17,18 @@
  */
 
 class xrstf_Composer52_ClassLoader {
-	private $prefixes       = array();
-	private $fallbackDirs   = array();
-	private $useIncludePath = false;
-	private $classMap       = array();
+	private $prefixes        = array();
+	private $fallbackDirs    = array();
+	private $useIncludePath  = false;
+	private $classMap        = array();
+	private $allowUnderscore = false;
+
+	/**
+	 * @param boolean $flag  true to allow class names with a leading underscore, false to disable
+	 */
+	public function setAllowUnderscore($flag) {
+		$this->allowUnderscore = (boolean) $flag;
+	}
 
 	/**
 	 * @return array
@@ -141,7 +149,7 @@ class xrstf_Composer52_ClassLoader {
 			return $this->classMap[$class];
 		}
 
-		$classPath = self::getClassPath($class);
+		$classPath = $this->getClassPath($class);
 
 		foreach ($this->prefixes as $prefix => $dirs) {
 			if (0 === strpos($class, $prefix)) {
@@ -166,7 +174,7 @@ class xrstf_Composer52_ClassLoader {
 		return $this->classMap[$class] = false;
 	}
 
-	private static function getClassPath($class) {
+	private function getClassPath($class) {
 		if (false !== $pos = strrpos($class, '\\')) {
 			// namespaced class name
 			$classPath = str_replace('\\', DIRECTORY_SEPARATOR, substr($class, 0, $pos)).DIRECTORY_SEPARATOR;
@@ -178,7 +186,14 @@ class xrstf_Composer52_ClassLoader {
 			$className = $class;
 		}
 
-		$classPath .= str_replace('_', DIRECTORY_SEPARATOR, $className).'.php';
+		$className = str_replace('_', DIRECTORY_SEPARATOR, $className);
+
+		// restore the prefix
+		if ($this->allowUnderscore && DIRECTORY_SEPARATOR === $className[0]) {
+			$className[0] = '_';
+		}
+
+		$classPath .= $className.'.php';
 
 		return $classPath;
 	}
