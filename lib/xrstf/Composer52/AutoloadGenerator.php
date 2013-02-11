@@ -287,7 +287,7 @@ HEADER;
 
 		if ($useIncludePath) {
 			$file .= <<<'INCLUDE_PATH'
-		$includePaths = require $dir.'/include_paths.php';
+		$includePaths = require $dir.'/include_paths_52.php';
 		array_push($includePaths, get_include_path());
 		set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
@@ -297,7 +297,7 @@ INCLUDE_PATH;
 
 		if ($usePSR0) {
 			$file .= <<<'PSR0'
-		$map = require $dir.'/autoload_namespaces.php';
+		$map = require $dir.'/autoload_namespaces_52.php';
 		foreach ($map as $namespace => $path) {
 			$loader->add($namespace, $path);
 		}
@@ -308,7 +308,7 @@ PSR0;
 
 		if ($useClassMap) {
 			$file .= <<<'CLASSMAP'
-		$classMap = require $dir.'/autoload_classmap.php';
+		$classMap = require $dir.'/autoload_classmap_52.php';
 		if ($classMap) {
 			$loader->addClassMap($classMap);
 		}
