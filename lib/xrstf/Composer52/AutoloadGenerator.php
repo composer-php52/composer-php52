@@ -36,6 +36,8 @@ class AutoloadGenerator extends BaseGenerator {
 		$targetDir  = $vendorPath.'/'.$targetDir;
 		$filesystem->ensureDirectoryExists($targetDir);
 
+		$useGlobalIncludePath = (bool) $config->get('use-include-path');
+
 		$relVendorPath             = $filesystem->findShortestPath(getcwd(), $vendorPath, true);
 		$vendorPathCode            = $filesystem->findShortestPathCode(realpath($targetDir), $vendorPath, true);
 		$vendorPathToTargetDirCode = $filesystem->findShortestPathCode($vendorPath, realpath($targetDir), true);
@@ -184,7 +186,7 @@ EOF;
 			file_put_contents($targetDir.'/include_paths_52.php', $includePathFile);
 		}
 		file_put_contents($vendorPath.'/autoload_52.php', $this->getAutoloadFile($vendorPathToTargetDirCode, $suffix));
-		file_put_contents($targetDir.'/autoload_real_52.php', $this->getAutoloadRealFile(true, true, (bool) $includePathFile, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix));
+		file_put_contents($targetDir.'/autoload_real_52.php', $this->getAutoloadRealFile(true, true, (bool) $includePathFile, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath));
 		copy(__DIR__.'/ClassLoader.php', $targetDir.'/ClassLoader52.php');
 	}
 
@@ -240,7 +242,7 @@ return ComposerAutoloaderInit$suffix::getLoader();
 AUTOLOAD;
 	}
 
-	protected function getAutoloadRealFile($usePSR0, $useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix) {
+	protected function getAutoloadRealFile($usePSR0, $useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath) {
 		// TODO the class ComposerAutoloaderInit should be revert to a closure
 		// when APC has been fixed:
 		// - https://github.com/composer/composer/issues/959
@@ -317,9 +319,17 @@ PSR0;
 CLASSMAP;
 		}
 
+		if ($useGlobalIncludePath) {
+			$file .= <<<'INCLUDEPATH'
+		$loader->setUseIncludePath(true);
+
+
+INCLUDEPATH;
+		}
+
 		if ($targetDirLoader) {
 			$file .= <<<REGISTER_AUTOLOAD
-		spl_autoload_register(array('ComposerAutoloaderInit$suffix', 'autoload'));
+		spl_autoload_register(array('ComposerAutoloaderInit$suffix', 'autoload'), true);
 
 
 REGISTER_AUTOLOAD;
