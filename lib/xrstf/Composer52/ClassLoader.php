@@ -64,28 +64,62 @@ class xrstf_Composer52_ClassLoader {
 	}
 
 	/**
-	 * Registers a set of classes
+	 * Registers a set of classes, merging with any others previously set.
 	 *
-	 * @param string       $prefix  the classes prefix
-	 * @param array|string $paths   the location(s) of the classes
+	 * @param string       $prefix   the classes prefix
+	 * @param array|string $paths    the location(s) of the classes
+	 * @param bool         $prepend  prepend the location(s)
 	 */
-	public function add($prefix, $paths) {
-		$paths = (array) $paths;
-
+	public function add($prefix, $paths, $prepend = false) {
 		if (!$prefix) {
-			foreach ($paths as $path) {
-				$this->fallbackDirs[] = $path;
+			if ($prepend) {
+				$this->fallbackDirs = array_merge(
+					(array) $paths,
+					$this->fallbackDirs
+				);
+			}
+			else {
+				$this->fallbackDirs = array_merge(
+					$this->fallbackDirs,
+					(array) $paths
+				);
 			}
 
 			return;
 		}
 
-		if (isset($this->prefixes[$prefix])) {
-			$this->prefixes[$prefix] = array_merge($this->prefixes[$prefix], $paths);
+		if (!isset($this->prefixes[$prefix])) {
+			$this->prefixes[$prefix] = (array) $paths;
+			return;
+		}
+
+		if ($prepend) {
+			$this->prefixes[$prefix] = array_merge(
+				(array) $paths,
+				$this->prefixes[$prefix]
+			);
 		}
 		else {
-			$this->prefixes[$prefix] = $paths;
+			$this->prefixes[$prefix] = array_merge(
+				$this->prefixes[$prefix],
+				(array) $paths
+			);
 		}
+	}
+
+	/**
+	 * Registers a set of classes, replacing any others previously set.
+	 *
+	 * @param string       $prefix  the classes prefix
+	 * @param array|string $paths   the location(s) of the classes
+	 */
+	public function set($prefix, $paths) {
+		if (!$prefix) {
+			$this->fallbackDirs = (array) $paths;
+			return;
+		}
+
+		$this->prefixes[$prefix] = (array) $paths;
 	}
 
 	/**
