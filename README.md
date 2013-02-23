@@ -3,8 +3,6 @@ PHP 5.2 Autoloading for Composer
 
 This package provides an easy way to get a PHP 5.2 compatible autoloader out of Composer. The generated autoloader is fully compatible to the original and is written into separate files, each ending with `_52.php`.
 
-*Note:* Currently, updating the autoloader on `composer dump-autoload` is not possible, as there is no script event yet that one could hook a script into.
-
 Usage
 -----
 
@@ -20,6 +18,9 @@ In your project's `composer.json`, add the following lines:
                 "xrstf\\Composer52\\Generator::onPostInstallCmd"
             ],
             "post-update-cmd": [
+                "xrstf\\Composer52\\Generator::onPostInstallCmd"
+            ],
+            "post-autoload-dump": [
                 "xrstf\\Composer52\\Generator::onPostInstallCmd"
             ]
         }

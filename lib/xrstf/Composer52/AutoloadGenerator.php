@@ -28,6 +28,10 @@ use Composer\Repository\RepositoryInterface;
 use Composer\Util\Filesystem;
 
 class AutoloadGenerator extends BaseGenerator {
+	public function __construct() {
+		// do nothing (but keep this constructor so we can build an instance without the need for an event dispatcher)
+	}
+
 	public function dump(Config $config, RepositoryInterface $localRepo, PackageInterface $mainPackage, InstallationManager $installationManager, $targetDir, $scanPsr0Packages = false, $suffix = '') {
 		$filesystem = new Filesystem();
 		$filesystem->ensureDirectoryExists($config->get('vendor-dir'));
