@@ -17,7 +17,8 @@ class Generator {
 	public static function onPostInstallCmd(Event $event) {
 		$composer            = $event->getComposer();
 		$installationManager = $composer->getInstallationManager();
-		$localRepos          = new CompositeRepository($composer->getRepositoryManager()->getLocalRepositories());
+		$repoManager         = $composer->getRepositoryManager();
+		$localRepo           = $repoManager->getLocalRepository();
 		$package             = $composer->getPackage();
 		$config              = $composer->getConfig();
 
@@ -38,6 +39,6 @@ class Generator {
 		$optimize = in_array('-o', $args) || in_array('-o', $args);
 
 		$generator = new AutoloadGenerator();
-		$generator->dump($config, $localRepos, $package, $installationManager, 'composer', $optimize);
+		$generator->dump($config, $localRepo, $package, $installationManager, 'composer', $optimize);
 	}
 }
