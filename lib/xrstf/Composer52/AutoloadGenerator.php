@@ -211,7 +211,7 @@ HEADER;
 
 		if ($useIncludePath) {
 			$file .= <<<'INCLUDE_PATH'
-		$includePaths = require $dir.'/include_paths_52.php';
+		$includePaths = require $dir.'/include_paths.php';
 		array_push($includePaths, get_include_path());
 		set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
