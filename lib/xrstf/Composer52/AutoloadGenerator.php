@@ -24,7 +24,7 @@ use Composer\Config;
 use Composer\Installer\InstallationManager;
 use Composer\Package\AliasPackage;
 use Composer\Package\PackageInterface;
-use Composer\Repository\RepositoryInterface;
+use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Util\Filesystem;
 
 class AutoloadGenerator extends BaseGenerator {
@@ -32,7 +32,7 @@ class AutoloadGenerator extends BaseGenerator {
 		// do nothing (but keep this constructor so we can build an instance without the need for an event dispatcher)
 	}
 
-	public function dump(Config $config, RepositoryInterface $localRepo, PackageInterface $mainPackage, InstallationManager $installationManager, $targetDir, $scanPsr0Packages = false, $suffix = '') {
+	public function dump(Config $config, InstalledRepositoryInterface $localRepo, PackageInterface $mainPackage, InstallationManager $installationManager, $targetDir, $scanPsr0Packages = false, $suffix = '') {
 		$filesystem = new Filesystem();
 		$filesystem->ensureDirectoryExists($config->get('vendor-dir'));
 
@@ -54,7 +54,7 @@ class AutoloadGenerator extends BaseGenerator {
 		$vendorPathCode            = str_replace('__DIR__', 'dirname(__FILE__)', $vendorPathCode);
 		$vendorPathToTargetDirCode = str_replace('__DIR__', 'dirname(__FILE__)', $vendorPathToTargetDirCode);
 
-		$packageMap = $this->buildPackageMap($installationManager, $mainPackage, $localRepo->getPackages());
+		$packageMap = $this->buildPackageMap($installationManager, $mainPackage, $localRepo->getCanonicalPackages());
 		$autoloads = $this->parseAutoloads($packageMap, $mainPackage);
 
 		// add custom psr-0 autoloading if the root package has a target dir
@@ -109,7 +109,14 @@ EOF;
 		file_put_contents($vendorPath.'/autoload_52.php', $this->getAutoloadFile($vendorPathToTargetDirCode, $suffix));
 		file_put_contents($targetDir.'/autoload_real_52.php', $this->getAutoloadRealFile(true, true, (bool) $includePathFile, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath));
 
-		copy(__DIR__.'/ClassLoader.php', $targetDir.'/ClassLoader52.php');
+		// use stream_copy_to_stream instead of copy
+		// to work around https://bugs.php.net/bug.php?id=64634
+		$sourceLoader = fopen(__DIR__.'/ClassLoader.php', 'r');
+		$targetLoader = fopen($targetDir.'/ClassLoader52.php', 'w+');
+		stream_copy_to_stream($sourceLoader, $targetLoader);
+		fclose($sourceLoader);
+		fclose($targetLoader);
+		unset($sourceLoader, $targetLoader);
 	}
 
 	protected function getIncludePathsFile(array $packageMap, Filesystem $filesystem, $basePath, $vendorPath, $vendorPathCode, $appBaseDirCode) {
@@ -198,7 +205,7 @@ class ComposerAutoloaderInit$suffix {
 			return self::\$loader;
 		}
 
-		spl_autoload_register(array('ComposerAutoloaderInit$suffix', 'loadClassLoader'));
+		spl_autoload_register(array('ComposerAutoloaderInit$suffix', 'loadClassLoader'), true, true);
 		self::\$loader = \$loader = new xrstf_Composer52_ClassLoader();
 		spl_autoload_unregister(array('ComposerAutoloaderInit$suffix', 'loadClassLoader'));
 
