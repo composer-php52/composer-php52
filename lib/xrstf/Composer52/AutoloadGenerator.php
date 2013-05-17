@@ -205,7 +205,7 @@ class ComposerAutoloaderInit$suffix {
 			return self::\$loader;
 		}
 
-		spl_autoload_register(array('ComposerAutoloaderInit$suffix', 'loadClassLoader'), true, true);
+		spl_autoload_register(array('ComposerAutoloaderInit$suffix', 'loadClassLoader'), true /*, true */);
 		self::\$loader = \$loader = new xrstf_Composer52_ClassLoader();
 		spl_autoload_unregister(array('ComposerAutoloaderInit$suffix', 'loadClassLoader'));
 
