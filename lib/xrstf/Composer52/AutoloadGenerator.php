@@ -43,6 +43,7 @@ class AutoloadGenerator extends BaseGenerator {
 		$filesystem->ensureDirectoryExists($targetDir);
 
 		$useGlobalIncludePath = (bool) $config->get('use-include-path');
+		$prependAutoloader    = $config->get('prepend-autoloader') === false ? 'false' : 'true';
 
 		$vendorPathCode            = $filesystem->findShortestPathCode(realpath($targetDir), $vendorPath, true);
 		$vendorPathToTargetDirCode = $filesystem->findShortestPathCode($vendorPath, realpath($targetDir), true);
@@ -107,7 +108,7 @@ EOF;
 		$includePathFile = $this->getIncludePathsFile($packageMap, $filesystem, $basePath, $vendorPath, $vendorPathCode, $appBaseDirCode);
 
 		file_put_contents($vendorPath.'/autoload_52.php', $this->getAutoloadFile($vendorPathToTargetDirCode, $suffix));
-		file_put_contents($targetDir.'/autoload_real_52.php', $this->getAutoloadRealFile(true, true, (bool) $includePathFile, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath));
+		file_put_contents($targetDir.'/autoload_real_52.php', $this->getAutoloadRealFile(true, true, (bool) $includePathFile, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader));
 
 		// use stream_copy_to_stream instead of copy
 		// to work around https://bugs.php.net/bug.php?id=64634
@@ -171,7 +172,7 @@ return ComposerAutoloaderInit$suffix::getLoader();
 AUTOLOAD;
 	}
 
-	protected function getAutoloadRealFile($usePSR0, $useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath) {
+	protected function getAutoloadRealFile($usePSR0, $useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader) {
 		// TODO the class ComposerAutoloaderInit should be revert to a closure
 		// when APC has been fixed:
 		// - https://github.com/composer/composer/issues/959
@@ -266,7 +267,7 @@ REGISTER_AUTOLOAD;
 		}
 
 		$file .= <<<METHOD_FOOTER
-		\$loader->register();{$filesCode}
+		\$loader->register($prependAutoloader);{$filesCode}
 
 		return \$loader;
 	}
