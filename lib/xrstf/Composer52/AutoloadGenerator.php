@@ -98,6 +98,8 @@ EOF;
 		$filesCode = "";
 		$autoloads['files'] = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($autoloads['files']));
 		foreach ($autoloads['files'] as $functionFile) {
+			// don't include file if it is namespaced
+			// https://bitbucket.org/xrstf/composer-php52/issue/4
 			if ( ! ( preg_match('/use.*;/', file_get_contents($functionFile))
 				|| preg_match('/namespace.*;/', file_get_contents($functionFile))
 				)
