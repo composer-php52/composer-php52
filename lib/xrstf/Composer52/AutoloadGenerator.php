@@ -98,7 +98,12 @@ EOF;
 		$filesCode = "";
 		$autoloads['files'] = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($autoloads['files']));
 		foreach ($autoloads['files'] as $functionFile) {
-			$filesCode .= '		require '.$this->getPathCode($filesystem, $basePath, $vendorPath, $functionFile).";\n";
+			if ( ! ( preg_match('/use.*;/', file_get_contents($functionFile))
+				|| preg_match('/namespace.*;/', file_get_contents($functionFile))
+				)
+			) {
+				$filesCode .= '		require '.$this->getPathCode($filesystem, $basePath, $vendorPath, $functionFile).";\n";
+			}
 		}
 
 		if (!$suffix) {
