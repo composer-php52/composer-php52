@@ -98,12 +98,12 @@ EOF;
 		$filesCode = "";
 		$autoloads['files'] = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($autoloads['files']));
 		foreach ($autoloads['files'] as $functionFile) {
-			// don't include file if it is namespaced
+			// don't include file if it is using PHP 5.3+ syntax
 			// https://bitbucket.org/xrstf/composer-php52/issue/4
-			if ( ! ( preg_match('/use.*;/', file_get_contents($functionFile))
-				|| preg_match('/namespace.*;/', file_get_contents($functionFile))
-				)
-			) {
+			if ($this->isPHP53($functionFile)) {
+				$filesCode .= '//		require '.$this->getPathCode($filesystem, $basePath, $vendorPath, $functionFile)."; // disabled because of PHP 5.3 syntax\n";
+			}
+			else {
 				$filesCode .= '		require '.$this->getPathCode($filesystem, $basePath, $vendorPath, $functionFile).";\n";
 			}
 		}
@@ -125,6 +125,32 @@ EOF;
 		fclose($sourceLoader);
 		fclose($targetLoader);
 		unset($sourceLoader, $targetLoader);
+	}
+
+	protected function isPHP53($file) {
+		$tokens = token_get_all(file_get_contents($file));
+		$php53  = array(T_DIR, T_GOTO, T_NAMESPACE, T_NS_C, T_NS_SEPARATOR, T_USE);
+
+		// PHP 5.4+
+		if (defined('T_TRAIT')) {
+			$php53[] = T_TRAIT;
+			$php53[] = T_TRAIT_C;
+			$php53[] = T_TRAIT_C;
+		}
+
+		// PHP 5.5+
+		if (defined('T_FINALLY')) {
+			$php53[] = T_FINALLY;
+			$php53[] = T_YIELD;
+		}
+
+		foreach ($tokens as $token) {
+			if (is_array($token) && in_array($token[0], $php53)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	protected function getIncludePathsFile(array $packageMap, Filesystem $filesystem, $basePath, $vendorPath, $vendorPathCode, $appBaseDirCode) {
