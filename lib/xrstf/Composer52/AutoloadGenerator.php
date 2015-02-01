@@ -42,8 +42,9 @@ class AutoloadGenerator extends BaseGenerator {
 		$targetDir  = $vendorPath.'/'.$targetDir;
 		$filesystem->ensureDirectoryExists($targetDir);
 
-		$useGlobalIncludePath = (bool) $config->get('use-include-path');
-		$prependAutoloader    = $config->get('prepend-autoloader') === false ? 'false' : 'true';
+		$useGlobalIncludePath  = (bool) $config->get('use-include-path');
+		$prependAutoloader     = $config->get('prepend-autoloader') === false ? 'false' : 'true';
+		$classMapAuthoritative = $config->get('classmap-authoritative');
 
 		$vendorPathCode            = $filesystem->findShortestPathCode(realpath($targetDir), $vendorPath, true);
 		$vendorPathToTargetDirCode = $filesystem->findShortestPathCode($vendorPath, realpath($targetDir), true);
@@ -115,7 +116,7 @@ EOF;
 		$includePathFile = $this->getIncludePathsFile($packageMap, $filesystem, $basePath, $vendorPath, $vendorPathCode, $appBaseDirCode);
 
 		file_put_contents($vendorPath.'/autoload_52.php', $this->getAutoloadFile($vendorPathToTargetDirCode, $suffix));
-		file_put_contents($targetDir.'/autoload_real_52.php', $this->getAutoloadRealFile(true, (bool) $includePathFile, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader));
+		file_put_contents($targetDir.'/autoload_real_52.php', $this->getAutoloadRealFile(true, (bool) $includePathFile, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader, $classMapAuthoritative));
 
 		// use stream_copy_to_stream instead of copy
 		// to work around https://bugs.php.net/bug.php?id=64634
@@ -205,7 +206,7 @@ return ComposerAutoloaderInit$suffix::getLoader();
 AUTOLOAD;
 	}
 
-	protected function getAutoloadRealFile($useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader) {
+	protected function getAutoloadRealFile($useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader, $classMapAuthoritative) {
 		// TODO the class ComposerAutoloaderInit should be revert to a closure
 		// when APC has been fixed:
 		// - https://github.com/composer/composer/issues/959
@@ -278,6 +279,13 @@ PSR0;
 
 
 CLASSMAP;
+		}
+
+		if ($classMapAuthoritative) {
+			$file .= <<<'CLASSMAPAUTHORITATIVE'
+		$loader->setClassMapAuthoritative(true);
+
+CLASSMAPAUTHORITATIVE;
 		}
 
 		if ($useGlobalIncludePath) {

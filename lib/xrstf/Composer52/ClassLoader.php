@@ -17,11 +17,12 @@
  */
 
 class xrstf_Composer52_ClassLoader {
-	private $prefixes        = array();
-	private $fallbackDirs    = array();
-	private $useIncludePath  = false;
-	private $classMap        = array();
-	private $allowUnderscore = false;
+	private $prefixes              = array();
+	private $fallbackDirs          = array();
+	private $useIncludePath        = false;
+	private $classMap              = array();
+	private $classMapAuthoratative = false;
+	private $allowUnderscore       = false;
 
 	/**
 	 * @param boolean $flag  true to allow class names with a leading underscore, false to disable
@@ -35,6 +36,25 @@ class xrstf_Composer52_ClassLoader {
 	 */
 	public function getPrefixes() {
 		return $this->prefixes;
+	}
+
+	/**
+	 * Turns off searching the prefix and fallback directories for classes
+	 * that have not been registered with the class map.
+	 *
+	 * @param bool $classMapAuthoratative
+	 */
+	public function setClassMapAuthoritative($classMapAuthoratative) {
+		$this->classMapAuthoratative = $classMapAuthoratative;
+	}
+
+	/**
+	 * Should class lookup fail if not found in the current class map?
+	 *
+	 * @return bool
+	 */
+	public function getClassMapAuthoratative() {
+		return $this->classMapAuthoratative;
 	}
 
 	/**
@@ -181,6 +201,9 @@ class xrstf_Composer52_ClassLoader {
 
 		if (isset($this->classMap[$class])) {
 			return $this->classMap[$class];
+		}
+		elseif ($this->classMapAuthoratative) {
+			return false;
 		}
 
 		$classPath = $this->getClassPath($class);
