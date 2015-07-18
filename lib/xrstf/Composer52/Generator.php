@@ -31,7 +31,9 @@ class Generator {
 		$args     = $_SERVER['argv'];
 		$optimize = in_array('-o', $args) || in_array('--optimize-autoloader', $args) || in_array('--optimize', $args);
 
+		$suffix   = $config->get('autoloader-suffix');
+
 		$generator = new AutoloadGenerator();
-		$generator->dump($config, $localRepo, $package, $installationManager, 'composer', $optimize);
+		$generator->dump($config, $localRepo, $package, $installationManager, 'composer', $optimize, $suffix);
 	}
 }
