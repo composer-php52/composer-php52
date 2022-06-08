@@ -228,7 +228,7 @@ return ComposerAutoloaderInit$suffix::getLoader();
 AUTOLOAD;
 	}
 
-	protected function getAutoloadRealFile($useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader, $staticPhpVersion = 70000) {
+	protected function getAutoloadRealFile($useClassMap, $useIncludePath, $targetDirLoader, $filesCode, $vendorPathCode, $appBaseDirCode, $suffix, $useGlobalIncludePath, $prependAutoloader, $staticPhpVersion = 70000, $checkPlatform = false) {
 		// TODO the class ComposerAutoloaderInit should be revert to a closure
 		// when APC has been fixed:
 		// - https://github.com/composer/composer/issues/959
